@@ -1,6 +1,16 @@
-
+from flask import Flask
 from db import *
 
+"""
+    @Author:    Guillermo Rodriguez
+    @Created:   01.25.2020
+    @Inputs:    url         -> The server name
+                schema      -> The database schema to connect to 
+                username    -> Account user name
+                password    -> Account password
+    @Outputs    Dictionary of dictionary objects containing the mapping between schema to tables to table attribute mapping
+    @Purpose:   Function to retrieve database relationships for some desired schema
+"""
 def GetSchema(url, schema, username, password):
     endpoints = { schema: {} }
     columns = ['ORDINAL_POSITION', 'COLUMN_KEY', 'EXTRA', 'COLUMN_NAME', 'COLUMN_TYPE', 'COLUMN_DEFAULT',
@@ -33,12 +43,24 @@ def GetSchema(url, schema, username, password):
 
     return endpoints
 
+  
 if __name__ == "__main__":
     print("Starting ...")
-    
-    schema = GetSchema('127.0.0.1', 'world', 'ums', 'blablah')
 
-    # Flask initialized
-        
+    REPOSITORY = 'world'
+    
+    schema = GetSchema('127.0.0.1', REPOSITORY, 'ums', 'blahBLAH001')
+    for key, value in schema[REPOSITORY].items():
+        print(key, value)
+
+    # Initialize flask 
+    application = Flask(__name__)
+    @application.route("/api/" + REPOSITORY + '/<name>', methods=['DELETE', 'GET', 'POST', 'PUT'])
+    def index(name):
+        return "End Point: " + name
+    
+    # Start web server
+    application.run()
+    
 
     print("Terminated ...")
