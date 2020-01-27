@@ -1,5 +1,6 @@
-from flask import Flask
+from flask import Flask, request
 from db import *
+import json
 
 """
     @Author:    Guillermo Rodriguez
@@ -28,13 +29,16 @@ def GetSchema(url, schema, username, password):
         object_list = mysql.query(object_query)
         for entry in object_list:
             for item in entry:
-                endpoints[schema][item] = {}
+                endpoints[schema][item] = []
 
                 # Query individual table elements
                 table_schema = mysql.query(table_query.replace('[TARGET_TABLE]', item))
                 for entry in table_schema:
+                    row = {}
                     for index in range(0, len(columns)):
-                        endpoints[schema][item][columns[index]] = entry[index]
+                        row[columns[index]] = entry[index]
+
+                    endpoints[schema][item].append(row)
 
         mysql.close()
 
@@ -43,22 +47,78 @@ def GetSchema(url, schema, username, password):
 
     return endpoints
 
+def FormatInput(target, value, attributes):
+    result = target + ' = '
+
+    for entry in attributes:
+        if entry['COLUMN_NAME'].lower() == target.lower():
+            if entry['DATA_TYPE'].lower() in ['binary', 'blob', 'char', 'date', 'datetime', 'enum', 'set', 'text', 'time', 'timestamp', 'varbinary', 'varchar', 'year']:
+                result += "'" + value + "'"
+            else:
+                result += str(value)
+
+            break
+
+    return result
+
+def GetData(url, schema, username, password, query):
+    result = None
+
+    try:
+        mysql = db(url, schema, username, password)
+        mysql.connect()
+
+        result = mysql.query(query)
+
+        mysql.close()
+
+    except Exception as ex:
+        print(ex)
+
+    return result 
   
 if __name__ == "__main__":
     print("Starting ...")
 
+    SERVER = '127.0.0.1'
     REPOSITORY = 'world'
-    
-    schema = GetSchema('127.0.0.1', REPOSITORY, 'ums', 'blahBLAH001')
-    for key, value in schema[REPOSITORY].items():
-        print(key, value)
+    USERNAME = 'ums'
+    PASSWORD = 'blahBLAH001'
+
+    schema = GetSchema(SERVER, REPOSITORY, USERNAME, PASSWORD)
 
     # Initialize flask 
     application = Flask(__name__)
     @application.route("/api/" + REPOSITORY + '/<name>', methods=['DELETE', 'GET', 'POST', 'PUT'])
     def index(name):
-        return "End Point: " + name
+        if request.method == 'DELETE':
+            # Remove entry
+            pass
+        elif request.method == 'GET':
+            # Retrieve entry
+            query = "SELECT * FROM %s.%s" % (REPOSITORY, name)
+            values = {}
+            for entry in request.args:
+                if not "WHERE" in query:
+                    query += " WHERE "
+                else:
+                    query += " AND "
+
+                query += FormatInput(entry, request.args[entry], schema[REPOSITORY][name])
+
+            query += ";"
     
+            return json.dumps( GetData(SERVER, REPOSITORY, USERNAME, PASSWORD, query) )
+
+        elif request.method == 'POST':
+            # Create entry
+            pass
+
+        elif request.method == 'PUT':
+            # Replace designated value
+            pass
+        
+
     # Start web server
     application.run()
     
