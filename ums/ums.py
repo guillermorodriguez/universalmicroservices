@@ -36,7 +36,7 @@ def GetSchema(url, schema, username, password):
 if __name__ == "__main__":
     print("Starting ...")
     
-    schema = GetSchema('127.0.0.1', 'world', 'root', 'GgG@29@14@15')
+    schema = GetSchema('127.0.0.1', 'world', 'ums', 'blablah')
 
     # Flask initialized
         
