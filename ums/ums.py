@@ -47,6 +47,13 @@ def GetSchema(url, schema, username, password):
 
     return endpoints
 
+"""
+    @Author:    Guillermo Rodriguez
+    @Created:   01.25.2020
+    @Inputs:    
+    @Outputs    
+    @Purpose:   
+"""
 def FormatInput(target, value, attributes):
     result = target + ' = '
 
@@ -61,6 +68,36 @@ def FormatInput(target, value, attributes):
 
     return result
 
+"""
+    @Author:    Guillermo Rodriguez
+    @Created:   01.25.2020
+    @Inputs:    
+    @Outputs    
+    @Purpose:   
+"""
+def formatOutput(columns, data):
+    result = []
+
+    try:
+        for entry in data:
+            row {}
+            for index in range(0, len(entry)):
+                row[columns[index]] = entry[index]
+
+        result.append(row)
+
+    except Exception as ex:
+        print(ex)
+
+    return result
+
+"""
+    @Author:    Guillermo Rodriguez
+    @Created:   01.25.2020
+    @Inputs:    
+    @Outputs    
+    @Purpose:   
+"""
 def GetData(url, schema, username, password, query):
     result = None
 
