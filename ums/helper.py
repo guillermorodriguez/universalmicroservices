@@ -51,12 +51,43 @@ class helper(object):
                 for index in range(0, len(entry)):
                     row[columns[index]] = entry[index]
 
-            result.append(row)
+                result.append(row)
 
         except Exception as ex:
             print(ex)
 
         return result
+
+    """
+        @Author:    Guillermo Rodriguez
+        @Created:   01.25.2020
+        @Inputs:    url         -> The server name
+                    schema      -> The database schema to connect to 
+                    username    -> Account user name
+                    password    -> Account password
+                    table       -> Table name to filter column values on
+        @Outputs    Listing of column names that a specific table has
+        @Purpose:   To retrieve the names of all the columns a specific table contains as a list
+    """
+    def GetColumnNames(self, url, schema, username, password, table):
+
+        data = []
+
+        query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" + schema + "' " 
+        query += "and TABLE_NAME = '" + table + "' ORDER BY ORDINAL_POSITION ASC;"
+
+        try:
+            mysql = db(url, schema, username, password)
+            mysql.connect()
+
+            data = [c[0] for c in mysql.query(query)]
+
+            mysql.close()
+
+        except Exception as ex:
+            print(ex)
+
+        return data
 
     """
         @Author:    Guillermo Rodriguez

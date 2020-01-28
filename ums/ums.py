@@ -50,8 +50,10 @@ if __name__ == "__main__":
             except Exception as ex:
                 print(ex)
 
-            return response 
+            response['data'] = facilitate.FormatOutput(facilitate.GetColumnNames(SERVER, REPOSITORY, USERNAME, PASSWORD, name), response['data'])
 
+            return response 
+        
         elif request.method == 'POST':
             # Create entry
             pass
