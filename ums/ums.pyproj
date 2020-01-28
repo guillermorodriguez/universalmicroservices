@@ -25,6 +25,9 @@
     <Compile Include="db.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="helper.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ums.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
