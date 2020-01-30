@@ -106,7 +106,7 @@ class Db(object):
             query += columns + values
 
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(query)
 
             for entry in cursor:
                 data.append(entry)
@@ -139,10 +139,10 @@ class Db(object):
                 clause += facilitate.FormatInput(key, value, schema)
 
             if len(clause) > 0:
-                clause = ' WHERE ' + clause + ';' 
+                clause = ' WHERE ' + clause 
 
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(query + clause + ';')
 
             for entry in cursor:
                 data.append(entry)
@@ -195,7 +195,7 @@ class Db(object):
             query = 'SELECT ' + ', '.join(columns) + ' FROM ' + table + ';'
 
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(query)
 
             for entry in cursor:
                 data.append(entry)
@@ -211,10 +211,11 @@ class Db(object):
         @Inputs:    table               -> 
                     columnsAndValues    ->
                     conditions          ->
+                    schema              -> Table schema to operate on
         @Outputs    
         @Purpose:   
     """
-    def Update(self, table, columnsAndValues, conditions):
+    def Update(self, table, columnsAndValues, conditions, schema):
         data = []
         cursor = None
         query = ''
@@ -229,10 +230,17 @@ class Db(object):
                 if len(update) > 0:
                     update += ', '
 
-                update += ''
+                update += faciliate.FormatInput(key, value, schema)
+
+            condition = ''
+            for key, value in conditions:
+                if len(condition) > 0:
+                    condition += ' AND '
+                
+                condition += facilitate.FormatInput(key, value, schema)
 
             cursor = self.connection.cursor()
-            cursor.execute(sql)
+            cursor.execute(query + update + condition + ';')
 
             for entry in cursor:
                 data.append(entry)
