@@ -6,27 +6,32 @@ from db import *
     @Created:   01.25.2020
     @Purpose:   Helper class to house functions to facilitate some body of work
 """
-class helper(object):
+class Helper(object):
     """
         @Author:    Guillermo Rodriguez
         @Created:   01.25.2020
+        @Inputs:    None
+        @Outputs:   None
+        @Purpose:   Constructor
     """
     def __init__(self):
-        pass
+        self.like_string = ['binary', 'blob', 'char', 'date', 'datetime', 'enum', 'set', 'text', 'time', 'timestamp', 'varbinary', 'varchar', 'year']
 
     """
         @Author:    Guillermo Rodriguez
-        @Created:   01.25.2020
-        @Inputs:    
-        @Outputs    
-        @Purpose:   
+        @Created:   01.30.2020
+        @Inputs:    target      -> Column name to search
+                    value       -> Individual element to format
+                    attributes  -> Dictionary of table attributes to search upon
+        @Outputs:   None
+        @Purpose:   Constructor
     """
-    def FormatInput(self, target, value, attributes):
-        result = target + ' = '
+    def FormatField(target, value, attributes):
+        result = ""
 
         for entry in attributes:
             if entry['COLUMN_NAME'].lower() == target.lower():
-                if entry['DATA_TYPE'].lower() in ['binary', 'blob', 'char', 'date', 'datetime', 'enum', 'set', 'text', 'time', 'timestamp', 'varbinary', 'varchar', 'year']:
+                if entry['DATA_TYPE'].lower() in self.like_string:
                     result += "'" + value + "'"
                 else:
                     result += str(value)
@@ -38,9 +43,34 @@ class helper(object):
     """
         @Author:    Guillermo Rodriguez
         @Created:   01.25.2020
-        @Inputs:    
-        @Outputs    
-        @Purpose:   
+        @Inputs:    target      -> Name of column to operate on
+                    value       -> Value to apply to desired column
+                    attributes  -> List of table detail
+        @Outputs    Formated equality constraint as a string
+        @Purpose:   To format a given input field and its corresponding value to a proper SQL format to apply to a query
+    """
+    def FormatInput(self, target, value, attributes):
+        result = target + ' = '
+
+        for entry in attributes:
+            if entry['COLUMN_NAME'].lower() == target.lower():
+                if entry['DATA_TYPE'].lower() in self.like_string:
+                    result += "'" + value + "'"
+                else:
+                    result += str(value)
+
+                break
+
+        return result
+
+    """
+        @Author:    Guillermo Rodriguez
+        @Created:   01.25.2020
+        @Inputs:    columns         -> Name of columns in data set
+                    data            -> Data sequence to serialize
+        @Outputs    Array of hash values representing the data rows as hash elements
+        @Purpose:   The purpose of this function is to take a series of columns and map those columns to the data
+                    retrieved so that the data is assigned to its corresponding column name in a dictionary mapping
     """
     def FormatOutput(self, columns, data):
         result = []
@@ -77,10 +107,10 @@ class helper(object):
         query += "and TABLE_NAME = '" + table + "' ORDER BY ORDINAL_POSITION ASC;"
 
         try:
-            mysql = db(url, schema, username, password)
-            mysql.connect()
+            mysql = Db(url, schema, username, password)
+            mysql.Connect()
 
-            data = [c[0] for c in mysql.query(query)]
+            data = [c[0] for c in mysql.Query(query)]
 
             mysql.close()
 
@@ -110,16 +140,16 @@ class helper(object):
         table_query += " FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" + schema + "' and TABLE_NAME = '[TARGET_TABLE]' ORDER BY ORDINAL_POSITION ASC;"
     
         try:
-            mysql = db(url, schema, username, password)
-            mysql.connect()
+            mysql = Db(url, schema, username, password)
+            mysql.Connect()
 
-            object_list = mysql.query(object_query)
+            object_list = mysql.Query(object_query)
             for entry in object_list:
                 for item in entry:
                     endpoints[schema][item] = []
 
                     # Query individual table elements
-                    table_schema = mysql.query(table_query.replace('[TARGET_TABLE]', item))
+                    table_schema = mysql.Query(table_query.replace('[TARGET_TABLE]', item))
                     for entry in table_schema:
                         row = {}
                         for index in range(0, len(columns)):
@@ -127,7 +157,7 @@ class helper(object):
 
                         endpoints[schema][item].append(row)
 
-            mysql.close()
+            mysql.Close()
 
         except Exception as ex:
             print(ex)

@@ -22,10 +22,10 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="db.py">
+    <Compile Include="Db.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="helper.py">
+    <Compile Include="Helper.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ums.py" />

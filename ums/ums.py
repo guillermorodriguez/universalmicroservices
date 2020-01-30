@@ -11,7 +11,7 @@ if __name__ == "__main__":
     USERNAME = 'ums'
     PASSWORD = 'blahBLAH001'
 
-    facilitate = helper()
+    facilitate = Helper()
     schema = facilitate.GetSchema(SERVER, REPOSITORY, USERNAME, PASSWORD)
 
     # Initialize flask
@@ -40,10 +40,10 @@ if __name__ == "__main__":
             query += ";"
             
             try:
-                mysql = db(SERVER, REPOSITORY, USERNAME, PASSWORD)
-                mysql.connect()
+                mysql = Db(SERVER, REPOSITORY, USERNAME, PASSWORD)
+                mysql.Connect()
 
-                response['data'] = mysql.query(query)
+                response['data'] = mysql.Query(query)
 
                 mysql.close()
 
