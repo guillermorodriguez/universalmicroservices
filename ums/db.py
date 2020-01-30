@@ -208,9 +208,9 @@ class Db(object):
     """
         @Author:    Guillermo Rodriguez
         @Created:   01.29.2020
-        @Inputs:    table               -> 
-                    columnsAndValues    ->
-                    conditions          ->
+        @Inputs:    table               -> Name of table to operate on
+                    columnsAndValues    -> Series of column and corresponding values to assign on update
+                    conditions          -> Dictionary of filter condition to apply to on update
                     schema              -> Table schema to operate on
         @Outputs    
         @Purpose:   
