@@ -1,5 +1,5 @@
-
-from db import *
+import sys
+from lib.dbSql import *
 
 """
     @Author:    Guillermo Rodriguez
@@ -26,7 +26,7 @@ class Helper(object):
         @Outputs:   None
         @Purpose:   Constructor
     """
-    def FormatField(target, value, attributes):
+    def FormatField(self, target, value, attributes):
         result = ""
 
         for entry in attributes:
@@ -83,8 +83,8 @@ class Helper(object):
 
                 result.append(row)
 
-        except Exception as ex:
-            print(ex)
+        except:
+            print(sys.exc_info()[0])
 
         return result
 
@@ -107,15 +107,15 @@ class Helper(object):
         query += "and TABLE_NAME = '" + table + "' ORDER BY ORDINAL_POSITION ASC;"
 
         try:
-            mysql = Db(url, schema, username, password)
+            mysql = dbSql(url, schema, username, password)
             mysql.Connect()
 
             data = [c[0] for c in mysql.Query(query)]
 
-            mysql.close()
+            mysql.Close()
 
-        except Exception as ex:
-            print(ex)
+        except:
+            print(sys.exc_info()[0])
 
         return data
 
@@ -140,7 +140,7 @@ class Helper(object):
         table_query += " FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" + schema + "' and TABLE_NAME = '[TARGET_TABLE]' ORDER BY ORDINAL_POSITION ASC;"
     
         try:
-            mysql = Db(url, schema, username, password)
+            mysql = dbSql(url, schema, username, password)
             mysql.Connect()
 
             object_list = mysql.Query(object_query)
@@ -159,8 +159,8 @@ class Helper(object):
 
             mysql.Close()
 
-        except Exception as ex:
-            print(ex)
+        except:
+            print(sys.exc_info()[0])
 
         return endpoints
 

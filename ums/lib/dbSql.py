@@ -1,10 +1,13 @@
 
+
+import sys
+
 """
     @Author:    Guillermo Rodriguez
     @Created:   01.25.2020
     @Purpose:   General database object to manage database connections
 """
-class Db(object):
+class dbSql(object):
     
     """
         @Author:    Guillermo Rodriguez
@@ -36,8 +39,8 @@ class Db(object):
     def Close(self):
         try:
             self.connection.close()
-        except Exception as ex:
-            return ex
+        except:
+            return sys.exc_info()[0]
 
         return True
 
@@ -58,28 +61,29 @@ class Db(object):
                                                                             password = self.password,
                                                                             host=self.server,
                                                                             database=self.database)
-        except Exception as ex:
-            return ex
+        except:
+            return sys.exc_info()[0]
 
         return True
 
     """
         @Author:    Guillermo Rodriguez
         @Created:   01.29.2020
-        @Inputs:    table               -> Name of table
+        @Inputs:    database            -> Name of database to operate on
+                    table               -> Name of table
                     columnsAndValues    -> Dictionary of column to value mapping to insert
                     schema              -> Table schema definition
         @Outputs    The result of the insert operation from the database engine
         @Purpose:   To execute an insert statement on a table given the inputs provided
     """
-    def Create(self, table, columnsAndValues, schema):
+    def Create(self, database, table, columnsAndValues, schema):
         data = []
         cursor = None
         query = ''
         facilitate = Helper()
 
         try:
-            query = 'INSERT INTO %s ' % table
+            query = 'INSERT INTO %s.%s ' % (database, table)
 
             columns = ''
             values = ''
@@ -111,8 +115,8 @@ class Db(object):
             for entry in cursor:
                 data.append(entry)
 
-        except Exception as ex:
-            print(ex)
+        except:
+            print(sys.exc_info()[0])
 
         return data
 
@@ -147,8 +151,8 @@ class Db(object):
             for entry in cursor:
                 data.append(entry)
 
-        except Exception as ex:
-            print(ex)
+        except:
+            print(sys.exc_info()[0])
 
         return data
 
@@ -170,8 +174,8 @@ class Db(object):
             for entry in cursor:
                 data.append(entry)
 
-        except Exception as ex:
-            return ex
+        except:
+            return sys.exc_info()[0]
         finally:
             if not cursor is None:
                 cursor.close()
@@ -200,8 +204,8 @@ class Db(object):
             for entry in cursor:
                 data.append(entry)
 
-        except Exception as ex:
-            print(ex)
+        except:
+            print(sys.exc_info()[0])
 
         return data
 
@@ -245,7 +249,7 @@ class Db(object):
             for entry in cursor:
                 data.append(entry)
 
-        except Exception as ex:
-            print(ex)
+        except:
+            print(sys.exc_info()[0])
 
         return data

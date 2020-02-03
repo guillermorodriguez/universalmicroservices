@@ -1,6 +1,6 @@
 from flask import Flask, request
-from db import *
-from helper import *
+from lib.dbSql import *
+from lib.helper import *
 import json
 
 if __name__ == "__main__":
@@ -15,13 +15,14 @@ if __name__ == "__main__":
     schema = facilitate.GetSchema(SERVER, REPOSITORY, USERNAME, PASSWORD)
 
     # Initialize flask
-    response = {
-                "status": 200,
-                "data": [] 
-                }
     application = Flask(__name__)
     @application.route("/api/" + REPOSITORY + '/<name>', methods=['DELETE', 'GET', 'POST', 'PUT'])
     def index(name):
+        response = {
+                    "status": 200,
+                    "data": []
+                    }
+
         if request.method == 'DELETE':
             # Remove entry
             pass
@@ -40,12 +41,12 @@ if __name__ == "__main__":
             query += ";"
             
             try:
-                mysql = Db(SERVER, REPOSITORY, USERNAME, PASSWORD)
+                mysql = dbSql(SERVER, REPOSITORY, USERNAME, PASSWORD)
                 mysql.Connect()
 
                 response['data'] = mysql.Query(query)
 
-                mysql.close()
+                mysql.Close()
 
             except Exception as ex:
                 print(ex)
@@ -56,7 +57,16 @@ if __name__ == "__main__":
         
         elif request.method == 'POST':
             # Create entry
-            pass
+            
+            try:
+                response = {}
+                for key, value in request.form.to_dict(flat=False).items():
+                    response[key] = value[0]
+
+
+            except:
+                response['error'] - sys.exc_inf()[0]
+                response['status'] = 500
 
         elif request.method == 'PUT':
             # Replace designated value
