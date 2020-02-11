@@ -1,6 +1,8 @@
+import os
+import sys
 from flask import Flask, request
-from lib.dbSql import *
-from lib.helper import *
+from helper import *
+from dbSql import *
 import json
 
 if __name__ == "__main__":
@@ -48,8 +50,8 @@ if __name__ == "__main__":
 
                 mysql.Close()
 
-            except Exception as ex:
-                print(ex)
+            except:
+                print(sys.exc_info()[0])
 
             response['data'] = facilitate.FormatOutput(facilitate.GetColumnNames(SERVER, REPOSITORY, USERNAME, PASSWORD, name), response['data'])
 
@@ -59,14 +61,22 @@ if __name__ == "__main__":
             # Create entry
             
             try:
-                response = {}
+                data = {}
                 for key, value in request.form.to_dict(flat=False).items():
-                    response[key] = value[0]
+                    data[key] = value[0]
+
+                mysql = dbSql(SERVER, REPOSITORY, USERNAME, PASSWORD)
+                mysql.Connect()
 
 
+                response['data'] =  mysql.Create(REPOSITORY, name, data, schema[REPOSITORY][name])
+                
+                mysql.Close()
             except:
-                response['error'] - sys.exc_inf()[0]
+                response['error'] = sys.exc_info()[0]
                 response['status'] = 500
+
+            return response
 
         elif request.method == 'PUT':
             # Replace designated value

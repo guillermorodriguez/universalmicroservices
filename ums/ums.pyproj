@@ -6,12 +6,16 @@
     <ProjectHome>
     </ProjectHome>
     <StartupFile>ums.py</StartupFile>
-    <SearchPath>
-    </SearchPath>
+    <SearchPath>..\ums</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>ums</Name>
     <RootNamespace>UMS</RootNamespace>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+    <IsWindowsApplication>False</IsWindowsApplication>
+    <InterpreterId>Global|PythonCore|3.7</InterpreterId>
+    <DebugStdLib>False</DebugStdLib>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,24 +26,18 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="lib\dbSql.py">
+    <Compile Include="dbSql.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="lib\helper.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="lib\__init__.py">
+    <Compile Include="helper.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ums.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="lib\" />
+    <InterpreterReference Include="Global|PythonCore|3.7" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
