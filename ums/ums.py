@@ -46,23 +46,15 @@ if __name__ == "__main__":
   
         elif request.method == 'GET':
             # Retrieve entry
-            query = "SELECT * FROM %s.%s" % (REPOSITORY, name)
-            values = {}
-            for entry in request.args:
-                if not "WHERE" in query:
-                    query += " WHERE "
-                else:
-                    query += " AND "
-
-                query += facilitate.FormatInput(entry, request.args[entry], schema[REPOSITORY][name])
-
-            query += ";"
-            
             try:
+                data = {}
+                for key, value in request.args.items():
+                    data[key] = value
+
                 mysql = dbSql(SERVER, REPOSITORY, USERNAME, PASSWORD)
                 mysql.Connect()
 
-                response['data'] = mysql.Query(query)
+                response['data'] = mysql.Read(REPOSITORY, name, ['*'], data, schema[REPOSITORY][name])
 
                 mysql.Close()
 

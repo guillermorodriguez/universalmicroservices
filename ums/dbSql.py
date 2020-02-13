@@ -187,21 +187,35 @@ class dbSql():
     """
         @Author:    Guillermo Rodriguez
         @Created:   01.29.2020
-                    table           -> Name of table to perform SELECT operation on
-        @Inputs:    columns         -> List of column names to select from 
+        @Inputs:    database            -> Name of database to connect to
+                    table               -> Name of table to perform SELECT operation on
+                    columns             -> List of column names to select from 
+                    filter              -> Condition to filter upon
+                    schema              -> Table schema to operate on
         @Outputs    Field values returned by the database engine
         @Purpose:   To execute a select statement by the database engine
     """
-    def Read(self, table, columns):
+    def Read(self, database, table, columns, filter, schema):
         data = []
         cursor = None
         query = ''
 
+        facilitate = objHelp.Helper()
+
         try:
-            query = 'SELECT ' + ', '.join(columns) + ' FROM ' + table + ';'
+            query = 'SELECT ' + ', '.join(columns) + ' FROM %s.%s' % (database, table)
+
+            condition = ''
+            for key, value in filter.items():
+                if len(condition) > 0:
+                    condition += ' AND '
+                else:
+                    condition = ' WHERE '
+
+                condition += facilitate.FormatInput(key, value, schema)
 
             cursor = self.connection.cursor()
-            cursor.execute(query)
+            cursor.execute(query + condition + ';')
 
             for entry in cursor:
                 data.append(entry)
