@@ -27,7 +27,23 @@ if __name__ == "__main__":
 
         if request.method == 'DELETE':
             # Remove entry
-            pass
+            try:
+                data = {}
+                for key, value in request.form.to_dict(flat=False).items():
+                    data[key] = value[0]
+
+                mysql = dbSql(SERVER, REPOSITORY, USERNAME, PASSWORD)
+                mysql.Connect()
+
+                response['data'] =  mysql.Delete(REPOSITORY, name, data, schema[REPOSITORY][name])
+                
+                mysql.Close()
+            except:
+                response['error'] = sys.exc_info()[0]
+                response['status'] = 500
+
+            return response
+  
         elif request.method == 'GET':
             # Retrieve entry
             query = "SELECT * FROM %s.%s" % (REPOSITORY, name)
@@ -58,8 +74,7 @@ if __name__ == "__main__":
             return response 
         
         elif request.method == 'POST':
-            # Create entry
-            
+            # Create entry            
             try:
                 data = {}
                 for key, value in request.form.to_dict(flat=False).items():
@@ -80,7 +95,30 @@ if __name__ == "__main__":
 
         elif request.method == 'PUT':
             # Replace designated value
-            pass
+            try:
+                data = {}
+                for key, value in request.form.to_dict(flat=False).items():
+                    data[key] = value[0]
+
+                mysql = dbSql(SERVER, REPOSITORY, USERNAME, PASSWORD)
+                mysql.Connect()
+
+                condition = {}
+                id = facilitate.GetColumnsUniqueId(schema[REPOSITORY][name])
+                if id is not None:
+                    condition[id] = data[id]
+                    del data[id]
+
+                if len(condition) > 0:
+                    # Perform Update
+                    response['data'] =  mysql.Update(REPOSITORY, name, data, condition, schema[REPOSITORY][name])
+                
+                mysql.Close()
+            except:
+                response['error'] = sys.exc_info()[0]
+                response['status'] = 500
+
+            return response
     
 
     @application.errorhandler(400)

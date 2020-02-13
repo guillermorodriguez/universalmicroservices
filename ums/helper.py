@@ -122,6 +122,21 @@ class Helper():
 
     """
         @Author:    Guillermo Rodriguez
+        @Created:   02.11.2020
+        @Inputs:    schema      -> Table schema to search for primary key 
+        @Outputs    The name of the column that is the primary key of the table schema definition
+        @Purpose:   The purpose of this function is to obtain the primary key for some table defintion so that the unique
+                    column for the specific table can be identified.
+    """
+    def GetColumnsUniqueId(self, schema):
+        for entry in schema:
+            if entry['COLUMN_KEY'] == 'PRI':
+                return entry['COLUMN_NAME']
+
+        return None
+
+    """
+        @Author:    Guillermo Rodriguez
         @Created:   01.25.2020
         @Inputs:    url         -> The server name
                     schema      -> The database schema to connect to 

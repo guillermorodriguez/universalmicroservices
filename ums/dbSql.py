@@ -131,7 +131,7 @@ class dbSql():
         @Purpose:   To delete from a given table by providing the table name, the conditions to delete upon and the name
                     of the schema to operate on
     """
-    def Delete(self, table, condition, schema):
+    def Delete(self, database, table, condition, schema):
         data = []
         cursor = None
         query = ''
@@ -139,9 +139,9 @@ class dbSql():
         facilitate = objHelp.Helper()
 
         try:
-            query = 'DELETE FROM %s' % table
+            query = 'DELETE FROM %s.%s' % (database, table)
             clause = ''
-            for key, value in condition.itmes():
+            for key, value in condition.items():
                 clause += facilitate.FormatInput(key, value, schema)
 
             if len(clause) > 0:
@@ -149,9 +149,9 @@ class dbSql():
 
             cursor = self.connection.cursor()
             cursor.execute(query + clause + ';')
+            self.connection.commit()
 
-            for entry in cursor:
-                data.append(entry)
+            data.append({'rows': cursor.rowcount})
 
         except:
             print(sys.exc_info()[0])
@@ -221,7 +221,7 @@ class dbSql():
         @Outputs    
         @Purpose:   
     """
-    def Update(self, table, columnsAndValues, conditions, schema):
+    def Update(self, database, table, columnsAndValues, conditions, schema):
         data = []
         cursor = None
         query = ''
@@ -230,27 +230,29 @@ class dbSql():
 
         try:
 
-            query = 'UPDATE ' + table + ' SET '
+            query = 'UPDATE  %s.%s SET ' % (database, table) 
             
             update = ''
             for key, value in columnsAndValues.items():
                 if len(update) > 0:
                     update += ', '
 
-                update += faciliate.FormatInput(key, value, schema)
+                update += facilitate.FormatInput(key, value, schema)
 
             condition = ''
-            for key, value in conditions:
+            for key, value in conditions.items():
                 if len(condition) > 0:
                     condition += ' AND '
-                
+                else:
+                    condition = ' WHERE '
+
                 condition += facilitate.FormatInput(key, value, schema)
 
             cursor = self.connection.cursor()
             cursor.execute(query + update + condition + ';')
+            self.connection.commit()
 
-            for entry in cursor:
-                data.append(entry)
+            data.append({'rows': cursor.rowcount})
 
         except:
             print(sys.exc_info()[0])
